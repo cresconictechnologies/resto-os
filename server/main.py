@@ -30,10 +30,18 @@ from .routes.owner import router as owner_router
 from .routes.auth import router as auth_router
 from .supabase_client import get_supabase_config
 
+import sys
+
 # Base directories
-SERVER_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SERVER_DIR.parent
-STATIC_DIR = PROJECT_ROOT / "static"
+if getattr(sys, "frozen", False):
+    BUNDLE_DIR = Path(sys._MEIPASS)
+    STATIC_DIR = BUNDLE_DIR / "static"
+    if not STATIC_DIR.exists():
+        STATIC_DIR = Path(sys.executable).parent / "static"
+else:
+    SERVER_DIR = Path(__file__).resolve().parent
+    PROJECT_ROOT = SERVER_DIR.parent
+    STATIC_DIR = PROJECT_ROOT / "static"
 
 
 @asynccontextmanager

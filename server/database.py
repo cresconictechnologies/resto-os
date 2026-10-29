@@ -13,8 +13,22 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, sessionmaker, DeclarativeBase, Session
 
 # Resolve database path
-BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_DB_FILE = BASE_DIR / "restoos.db"
+import sys
+
+if os.getenv("RESTOOS_DATA_DIR"):
+    DEFAULT_DB_FILE = Path(os.getenv("RESTOOS_DATA_DIR")) / "restoos.db"
+elif getattr(sys, "frozen", False):
+    DEFAULT_DB_FILE = Path(sys.executable).parent / "restoos.db"
+    if not DEFAULT_DB_FILE.exists():
+        bundled_seed = Path(sys._MEIPASS) / "server" / "restoos.db"
+        if bundled_seed.exists():
+            try:
+                shutil.copy2(bundled_seed, DEFAULT_DB_FILE)
+            except Exception as e:
+                print(f"[RestoOS] Could not seed initial DB: {e}")
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+    DEFAULT_DB_FILE = BASE_DIR / "restoos.db"
 
 # Check for Supabase / PostgreSQL or local SQLite configuration
 raw_db_url = os.getenv("SUPABASE_DATABASE_URL") or os.getenv("DATABASE_URL")
