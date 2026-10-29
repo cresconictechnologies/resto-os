@@ -36,8 +36,13 @@ from ..schemas import (
     RestoIntelligenceRequest,
     RestoIntelligenceResponse,
 )
+from ..auth_guard import require_admin, TokenPayload
 
-router = APIRouter(prefix="/owner", tags=["Owner Executive Analytics & Intelligence"])
+router = APIRouter(
+    prefix="/owner",
+    tags=["Owner Executive Analytics & Intelligence"],
+    dependencies=[Depends(require_admin)],
+)
 
 
 # ============================================================================

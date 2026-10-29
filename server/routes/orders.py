@@ -27,6 +27,7 @@ from ..schemas import (
     TenantResponse,
     TenantUpdate,
 )
+from ..auth_guard import require_admin, verify_token, TokenPayload
 
 router = APIRouter(prefix="", tags=["Orders & Cart"])
 
@@ -205,7 +206,11 @@ def get_categories(db: Session = Depends(get_db)):
 
 
 @router.post("/categories", response_model=MenuCategoryResponse, status_code=status.HTTP_201_CREATED)
-def create_category(payload: MenuCategoryCreate, db: Session = Depends(get_db)):
+def create_category(
+    payload: MenuCategoryCreate,
+    db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
+):
     """Create or activate a menu category."""
     from ..database import engine
     from ..models import Base
@@ -258,7 +263,11 @@ def create_category(payload: MenuCategoryCreate, db: Session = Depends(get_db)):
 
 
 @router.delete("/categories/{category_id}")
-def delete_category(category_id: int, db: Session = Depends(get_db)):
+def delete_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
+):
     """Archive / delete a category."""
     cat = db.get(MenuCategory, category_id)
     if not cat:
@@ -272,6 +281,7 @@ def delete_category(category_id: int, db: Session = Depends(get_db)):
 def create_menu_item(
     payload: MenuItemCreate,
     db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
 ):
     """Create a new dish/drink in the menu catalog and auto-register category."""
     tenant = db.scalars(select(Tenant)).first()
@@ -318,6 +328,7 @@ def update_menu_item(
     menu_item_id: int,
     payload: MenuItemUpdate,
     db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
 ):
     """Update dish price, name, category, tax type, or availability."""
     item = db.get(MenuItem, menu_item_id)
@@ -363,6 +374,7 @@ def update_menu_item(
 def delete_menu_item(
     menu_item_id: int,
     db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
 ):
     """Delete or archive a menu item."""
     item = db.get(MenuItem, menu_item_id)
@@ -388,7 +400,11 @@ def get_tenant_details(db: Session = Depends(get_db)):
 
 
 @router.put("/tenant", response_model=TenantResponse)
-def update_tenant_details(payload: TenantUpdate, db: Session = Depends(get_db)):
+def update_tenant_details(
+    payload: TenantUpdate,
+    db: Session = Depends(get_db),
+    auth: TokenPayload = Depends(require_admin),
+):
     """Update restaurant profile, GSTIN, FSSAI, FL-3, address, and phone."""
     tenant = db.scalars(select(Tenant)).first()
     if not tenant:

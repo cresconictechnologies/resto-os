@@ -108,7 +108,7 @@ CREATE INDEX IF NOT EXISTS ix_order_items_order_id ON order_items(order_id);
 CREATE TABLE IF NOT EXISTS bills (
     id SERIAL PRIMARY KEY,
     tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-    order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE RESTRICT,
+    order_id INTEGER NOT NULL UNIQUE REFERENCES orders(id) ON DELETE RESTRICT,
     invoice_number VARCHAR(50) UNIQUE NOT NULL,
     food_subtotal NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
     liquor_subtotal NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
@@ -122,6 +122,17 @@ CREATE TABLE IF NOT EXISTS bills (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS ix_bills_invoice_number ON bills(invoice_number);
+
+-- 9b. Tenant-Scoped Indian Financial Year Invoicing Sequences
+CREATE TABLE IF NOT EXISTS invoice_counters (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    fin_year VARCHAR(10) NOT NULL,
+    last_number INTEGER NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_tenant_fin_year_invoice UNIQUE (tenant_id, fin_year)
+);
+CREATE INDEX IF NOT EXISTS ix_invoice_counters_tenant ON invoice_counters(tenant_id, fin_year);
 
 -- 10. Cash Drawer Shifts & Blind Close
 CREATE TABLE IF NOT EXISTS cash_shifts (

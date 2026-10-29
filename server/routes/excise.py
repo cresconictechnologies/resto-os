@@ -29,8 +29,13 @@ from ..schemas import (
     FLR4CategorySummary,
     DryDayStatusResponse,
 )
+from ..auth_guard import require_admin, TokenPayload
 
-router = APIRouter(prefix="/excise", tags=["Liquor Bar & Maharashtra State Excise FLR-3A"])
+router = APIRouter(
+    prefix="/excise",
+    tags=["Liquor Bar & Maharashtra State Excise FLR-3A"],
+    dependencies=[Depends(require_admin)],
+)
 
 # Official Maharashtra State Excise Statutory Dry Days Calendar (Fixed recurring dates)
 MAHARASHTRA_DRY_DAYS = {

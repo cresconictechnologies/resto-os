@@ -107,28 +107,28 @@ def seed_database():
                 username="mahesh_patil",
                 display_name="Mahesh Patil",
                 role="OWNER",
-                pin_hash=hash_pin("1111"),
+                pin_hash=hash_pin("9999"),
             ),
             User(
                 tenant_id=tenant.id,
                 username="sachin_kadam",
                 display_name="Sachin Kadam",
                 role="MANAGER",
-                pin_hash=hash_pin("2222"),
+                pin_hash=hash_pin("9999"),
             ),
             User(
                 tenant_id=tenant.id,
                 username="pooja_more",
                 display_name="Pooja More",
                 role="CASHIER",
-                pin_hash=hash_pin("3333"),
+                pin_hash=hash_pin("1234"),
             ),
             User(
                 tenant_id=tenant.id,
                 username="ganesh_shinde",
                 display_name="Ganesh Shinde",
                 role="STOREKEEPER",
-                pin_hash=hash_pin("4444"),
+                pin_hash=hash_pin("5678"),
             ),
         ]
         db.add_all(users)

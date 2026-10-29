@@ -262,8 +262,20 @@ class BillCalculationResponse(SchemaBase):
     items_breakdown: List[Dict[str, Any]]
 
 
+class BillSettleCartItem(SchemaBase):
+    item_id: int
+    name: Optional[str] = None
+    quantity: float = 1.0
+    unit_price: float
+    notes: Optional[str] = None
+    tax_category: Optional[str] = "GST_FOOD"
+
+
 class BillSettleRequest(SchemaBase):
-    order_id: int
+    order_id: Optional[int] = None
+    table_id: Optional[int] = None
+    table_code: Optional[str] = None
+    items: Optional[List[BillSettleCartItem]] = None
     payment_mode: str = "CASH"  # CASH, UPI, CARD, KHATA
     amount_paid: Optional[float] = None
     customer_name: Optional[str] = None

@@ -63,14 +63,24 @@ if is_sqlite:
         cursor.close()
 
 else:
-    # PostgreSQL / Supabase connection pool
-    engine = create_engine(
-        DATABASE_URL,
-        pool_pre_ping=True,
-        pool_size=int(os.getenv("DB_POOL_SIZE", "10")),
-        max_overflow=int(os.getenv("DB_MAX_OVERFLOW", "20")),
-        echo=os.getenv("SQL_ECHO", "False").lower() in ("true", "1"),
-    )
+    # PostgreSQL / Supabase connection handling
+    # On Serverless runtimes (Vercel / AWS Lambda), use NullPool to prevent connection starvation on Supabase.
+    is_serverless = os.getenv("VERCEL") == "1" or bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+    if is_serverless:
+        from sqlalchemy.pool import NullPool
+        engine = create_engine(
+            DATABASE_URL,
+            poolclass=NullPool,
+            echo=os.getenv("SQL_ECHO", "False").lower() in ("true", "1"),
+        )
+    else:
+        engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True,
+            pool_size=int(os.getenv("DB_POOL_SIZE", "10")),
+            max_overflow=int(os.getenv("DB_MAX_OVERFLOW", "20")),
+            echo=os.getenv("SQL_ECHO", "False").lower() in ("true", "1"),
+        )
 
 # Session Factory
 SessionLocal = sessionmaker(
@@ -86,9 +96,12 @@ class Base(DeclarativeBase):
 
 # FastAPI & Worker dependency generator
 def get_db() -> Generator[Session, None, None]:
-    """Dependency session generator providing transaction scope."""
+    """Dependency session generator providing transaction scope with automatic rollback on error."""
     db = SessionLocal()
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()

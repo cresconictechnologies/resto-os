@@ -352,7 +352,7 @@ class Bill(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), nullable=False, index=True)
-    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=False, index=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=False, unique=True, index=True)
     invoice_number: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
     food_subtotal: Mapped[float] = mapped_column(Float, default=0.0)
     food_cgst: Mapped[float] = mapped_column(Float, default=0.0)
@@ -386,6 +386,33 @@ class Bill(Base):
             "payment_mode": self.payment_mode,
             "payment_status": self.payment_status,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class InvoiceCounter(Base):
+    """
+    Tenant-scoped sequential invoice counter per Indian Financial Year (e.g. 2026-27).
+    Guarantees gap-free sequential numbers per GSTIN without full table scans or cross-tenant leakage.
+    """
+    __tablename__ = "invoice_counters"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey("tenants.id"), nullable=False, index=True)
+    fin_year: Mapped[str] = mapped_column(String(10), nullable=False)  # e.g. "2026-27"
+    last_number: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "fin_year", name="uq_tenant_fin_year_invoice"),
+    )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "tenant_id": self.tenant_id,
+            "fin_year": self.fin_year,
+            "last_number": self.last_number,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
 
 

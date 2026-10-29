@@ -41,8 +41,13 @@ from ..schemas import (
     Live86Response,
     Live86Item,
 )
+from ..auth_guard import require_admin, TokenPayload
 
-router = APIRouter(prefix="/inventory", tags=["Two-Tier Store & Kitchen Inventory"])
+router = APIRouter(
+    prefix="/inventory",
+    tags=["Two-Tier Store & Kitchen Inventory"],
+    dependencies=[Depends(require_admin)],
+)
 
 
 # ============================================================================
