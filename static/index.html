@@ -73,15 +73,15 @@
       <!-- Real-time Operational KPIs Header Metrics -->
       <div class="hidden md:flex items-center gap-6 text-xs font-mono">
         <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200">
-          <span class="text-gray-500 font-sans text-xs">Tables open:</span>
+          <span class="text-gray-500 font-sans text-xs" data-i18n="header.tables_open">Tables open:</span>
           <span id="header-tables-open" class="font-bold text-emerald-700">10 / 16</span>
         </div>
         <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200">
-          <span class="text-gray-500 font-sans text-xs">Covers today:</span>
+          <span class="text-gray-500 font-sans text-xs" data-i18n="header.covers_today">Covers today:</span>
           <span id="header-covers-today" class="font-bold text-gray-900">24</span>
         </div>
         <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-md border border-gray-200">
-          <span class="text-gray-500 font-sans text-xs">Sales today:</span>
+          <span class="text-gray-500 font-sans text-xs" data-i18n="header.sales_today">Sales today:</span>
           <span id="header-sales-today" class="font-bold text-gray-900">₹3,976.00</span>
         </div>
       </div>
@@ -99,6 +99,12 @@
         <div id="cloud-status-pill" class="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-medium" title="Supabase & LAN Database sync status">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span id="cloud-status-text">Local LAN Mesh</span>
+        </div>
+
+                <!-- Bilingual Language Selector (English / मराठी) -->
+        <div id="lang-toggle-container" class="flex items-center bg-gray-200/80 border border-gray-300 rounded-lg p-0.5 text-xs font-semibold shadow-2xs">
+          <button id="lang-btn-en" onclick="setLanguage('en')" title="Switch to English" class="px-2 py-0.5 rounded-md transition font-medium text-[11px] bg-white text-emerald-900 shadow-xs cursor-pointer">EN</button>
+          <button id="lang-btn-mr" onclick="setLanguage('mr')" title="मराठी भाषेत वापरा" class="px-2 py-0.5 rounded-md transition font-medium text-[11px] text-gray-600 hover:text-gray-900 cursor-pointer">मराठी</button>
         </div>
 
         <!-- Active Staff Role Pill & Switcher -->
@@ -128,27 +134,27 @@
     <nav class="flex items-center px-4 bg-gray-100 border-t border-gray-200 gap-1 text-xs font-medium overflow-x-auto">
       <button onclick="switchWorkspace('cash-counter')" id="tab-cash-counter" class="workspace-tab active-tab flex items-center gap-2 px-4 py-2 border-b-2 border-emerald-700 text-emerald-800 bg-white font-semibold">
         <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-        <span>Cash Counter & Floor</span>
+        <span data-i18n="nav.cash_counter">Cash Counter & Floor</span>
       </button>
       <button onclick="switchWorkspace('store-grocery')" id="tab-store-grocery" class="workspace-tab flex items-center gap-2 px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50">
         <i data-lucide="package-search" class="w-3.5 h-3.5"></i>
-        <span>Store & Grocery</span>
+        <span data-i18n="nav.store">Store & Grocery</span>
       </button>
       <button onclick="switchWorkspace('bar-excise')" id="tab-bar-excise" class="workspace-tab flex items-center gap-2 px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50">
         <i data-lucide="wine" class="w-3.5 h-3.5"></i>
-        <span>Bar & State Excise (FL-3)</span>
+        <span data-i18n="nav.bar_excise">Bar & State Excise (FL-3)</span>
       </button>
       <button onclick="switchWorkspace('owner-dashboard')" id="tab-owner-dashboard" class="workspace-tab flex items-center gap-2 px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50">
         <i data-lucide="line-chart" class="w-3.5 h-3.5"></i>
-        <span>Owner Dashboard & Analytics</span>
+        <span data-i18n="nav.owner_dashboard">Owner Dashboard & Analytics</span>
       </button>
       <button onclick="switchWorkspace('cashier-shift')" id="tab-cashier-shift" class="workspace-tab flex items-center gap-2 px-4 py-2 border-b-2 border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50">
         <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
-        <span>Cashier Shift (Z-Report)</span>
+        <span data-i18n="nav.cashier_shift">Cashier Shift (Z-Report)</span>
       </button>
       <button onclick="switchWorkspace('settings')" id="tab-settings" class="workspace-tab flex items-center gap-1.5 px-4 py-2 border-b-2 border-transparent text-emerald-900 font-semibold hover:bg-emerald-50">
         <i data-lucide="settings" class="w-3.5 h-3.5 text-emerald-700"></i>
-        <span>Settings & Menu</span>
+        <span data-i18n="nav.settings">Settings & Menu</span>
         <span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-200 text-emerald-900 font-bold uppercase tracking-wider">Config</span>
       </button>
     </nav>
@@ -354,7 +360,7 @@
           <button onclick="printCustomerBillModal()" id="btn-print-bill" class="flex items-center justify-between px-3.5 py-2.5 rounded-lg border-2 border-emerald-700 bg-white hover:bg-emerald-50 text-emerald-800 font-bold text-xs shadow-xs transition active:scale-[0.99]">
             <div class="flex items-center gap-2">
               <i data-lucide="printer" class="w-4 h-4 text-emerald-700"></i>
-              <span>Print Bill</span>
+              <span data-i18n="cart.print_bill">Print Bill</span>
             </div>
             <kbd class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px]">F3</kbd>
           </button>
@@ -363,7 +369,7 @@
           <button onclick="openSettlementModal()" id="btn-settle-drawer" class="flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs shadow-sm transition active:scale-[0.99]">
             <div class="flex items-center gap-2">
               <i data-lucide="banknote" class="w-4 h-4 text-amber-300"></i>
-              <span>Settle & Drawer</span>
+              <span data-i18n="cart.settle">Settle & Drawer</span>
             </div>
             <kbd class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-200 font-mono text-[10px]">F4</kbd>
           </button>
@@ -2523,7 +2529,7 @@
       <!-- Total Due Banner -->
       <div class="p-4 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between font-mono">
         <div>
-          <span class="text-xs text-emerald-800 font-sans font-medium">Grand Total Payable:</span>
+          <span class="text-xs text-emerald-800 font-sans font-medium"><span data-i18n="settle.grand_total_payable">Grand Total Payable:</span></span>
           <div class="text-2xl font-bold text-emerald-900" id="modal-settle-grand-total">₹1,218.00</div>
         </div>
         <span class="text-xs px-2.5 py-1 rounded bg-emerald-200 text-emerald-900 font-semibold font-sans">
@@ -2534,23 +2540,23 @@
       <!-- Tender Selector Tabs -->
       <div class="p-4 space-y-4">
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1.5">Select Payment Tender:</label>
+          <label class="block text-xs font-medium text-gray-700 mb-1.5"><span data-i18n="settle.select_tender">Select Payment Tender:</span></label>
           <div class="grid grid-cols-4 gap-2 text-xs font-medium">
             <button onclick="selectTender('cash')" id="tender-btn-cash" class="tender-tab active-tender p-2.5 rounded-lg border-2 border-emerald-700 bg-emerald-50 text-emerald-900 font-bold flex flex-col items-center gap-1">
               <i data-lucide="banknote" class="w-4 h-4"></i>
-              <span>Cash</span>
+              <span data-i18n="settle.tender_cash">Cash</span>
             </button>
             <button onclick="selectTender('upi')" id="tender-btn-upi" class="tender-tab p-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 flex flex-col items-center gap-1">
               <i data-lucide="qr-code" class="w-4 h-4"></i>
-              <span>UPI QR</span>
+              <span data-i18n="settle.tender_upi">UPI QR</span>
             </button>
             <button onclick="selectTender('card')" id="tender-btn-card" class="tender-tab p-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 flex flex-col items-center gap-1">
               <i data-lucide="credit-card" class="w-4 h-4"></i>
-              <span>Card</span>
+              <span data-i18n="settle.tender_card">Card</span>
             </button>
             <button onclick="selectTender('khata')" id="tender-btn-khata" class="tender-tab p-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 flex flex-col items-center gap-1">
               <i data-lucide="book-marked" class="w-4 h-4"></i>
-              <span>Khata</span>
+              <span data-i18n="settle.tender_khata">Khata</span>
             </button>
           </div>
         </div>
@@ -2558,7 +2564,7 @@
         <!-- Cash Details Container -->
         <div id="tender-section-cash" class="space-y-3 font-mono text-xs">
           <div>
-            <span class="block text-xs font-medium text-gray-700 font-sans mb-1">Cash Tendered by Guest (₹):</span>
+            <span class="block text-xs font-medium text-gray-700 font-sans mb-1"><span data-i18n="settle.amount_tendered">Cash Tendered by Guest (₹):</span></span>
             <input type="number" id="cash-tendered-input" oninput="calculateChangeDue()" class="w-full text-lg font-bold p-2.5 rounded-lg border border-gray-300 text-gray-900 focus:ring-1 focus:ring-emerald-700">
           </div>
           <!-- Quick add buttons -->
@@ -2569,7 +2575,7 @@
             <button onclick="addCashTendered(2000)" class="px-2.5 py-1 rounded bg-gray-100 text-gray-700 text-xs hover:bg-gray-200">+₹2,000</button>
           </div>
           <div class="p-3 bg-gray-100 rounded-lg flex items-center justify-between text-sm">
-            <span class="font-sans text-xs text-gray-600">Change Due to Customer:</span>
+            <span class="font-sans text-xs text-gray-600"><span data-i18n="settle.change_due">Change Due to Customer:</span></span>
             <span class="font-bold text-gray-900" id="cash-change-due">₹0.00</span>
           </div>
 
@@ -2611,7 +2617,7 @@
         </button>
         <button onclick="commitSettlement()" id="btn-commit-settle" class="px-5 py-2 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs shadow-sm flex items-center gap-1.5">
           <i data-lucide="check" class="w-4 h-4"></i>
-          <span>Confirm & Pop Cash Drawer</span>
+          <span data-i18n="settle.confirm">Confirm & Pop Cash Drawer</span>
         </button>
       </div>
     </div>
@@ -2990,9 +2996,15 @@
 
       <!-- Form Body -->
       <form id="form-modal-add-category" onsubmit="submitNewCategory(event)" class="p-4 space-y-3.5 text-xs">
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Category Name *</label>
-          <input type="text" id="modal-cat-name" required placeholder="e.g. Biryani & Rice, Soups, Mocktails..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Category Name (English) *</label>
+            <input type="text" id="modal-cat-name" required placeholder="e.g. Biryani & Rice, Soups..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">मराठीत वर्गवारी नाव (Marathi Name)</label>
+            <input type="text" id="modal-cat-name-mr" placeholder="उदा. बिर्याणी व भात, सूप..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+          </div>
         </div>
 
         <div>
@@ -3046,9 +3058,15 @@
 
       <!-- Form Body -->
       <form id="form-add-dish" onsubmit="submitNewDish(event)" class="p-4 space-y-3.5 text-xs">
-        <div>
-          <label class="block font-medium text-gray-700 mb-1">Dish / Drink Name *</label>
-          <input type="text" id="newdish-name" required placeholder="e.g. Tandoori Pomfret, Paneer Bhurji..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">Dish Name (English) *</label>
+            <input type="text" id="newdish-name" required placeholder="e.g. Tandoori Pomfret, Paneer Bhurji..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700 mb-1">मराठीत नाव (Marathi Name)</label>
+            <input type="text" id="newdish-name-mr" placeholder="उदा. तंदुरी पापलेट, पनीर भुर्जी..." class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:bg-white focus:ring-1 focus:ring-emerald-700 font-medium">
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">

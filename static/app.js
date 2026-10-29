@@ -37,11 +37,202 @@ async function apiFetch(url, options = {}) {
  */
 
 // =============================================================================
+
+// =============================================================================
+// MULTI-LANGUAGE ENGINE (ENGLISH & मराठी BILINGUAL SUPPORT)
+// =============================================================================
+
+const I18N = {
+  en: {
+    'nav.cash_counter': 'Cash Counter & Floor',
+    'nav.store': 'Store & Grocery',
+    'nav.bar_excise': 'Bar & State Excise (FL-3)',
+    'nav.owner_dashboard': 'Owner Dashboard & Analytics',
+    'nav.cashier_shift': 'Cashier Shift (Z-Report)',
+    'nav.settings': 'Settings & Menu',
+    'header.tables_open': 'Tables open:',
+    'header.covers_today': 'Covers today:',
+    'header.sales_today': 'Sales today:',
+    'cart.print_bill': 'Print Bill',
+    'cart.settle': 'Settle & Drawer',
+    'floor.ground': 'Ground floor',
+    'floor.terrace': 'Terrace',
+    'floor.tables_view': 'Tables (Floor)',
+    'floor.menu_view': 'Menu Grid',
+    'search.placeholder': 'Search dishes [Ctrl+F]...',
+    'status.open': 'OPEN',
+    'status.seated': 'SEATED',
+    'status.ordered': 'ORDERED',
+    'status.billed': 'BILLED',
+    'cart.empty': 'No items in order cart. Click dishes to add.',
+    'cart.food_subtotal': 'Food Subtotal (GST 5%)',
+    'cart.liquor_subtotal': 'Liquor Subtotal (MVAT 5%)',
+    'cart.total_tax': 'Statutory Taxes',
+    'cart.round_off': 'Round Off',
+    'cart.grand_total': 'Grand Total',
+    'settle.title': 'Tender Settlement & Drawer Kick',
+    'settle.grand_total_payable': 'Grand Total Payable:',
+    'settle.select_tender': 'Select Payment Tender:',
+    'settle.tender_cash': 'Cash (रोख)',
+    'settle.tender_upi': 'UPI / QR',
+    'settle.tender_card': 'Card / POS',
+    'settle.tender_khata': 'Khata / Ledger',
+    'settle.amount_tendered': 'Amount Tendered',
+    'settle.change_due': 'Change Due',
+    'settle.confirm': 'Confirm & Pop Cash Drawer',
+    'settle.cancel': 'Cancel (Esc)',
+  },
+  mr: {
+    'nav.cash_counter': 'कॅश काउंटर व मजला',
+    'nav.store': 'मध्यवर्ती भांडार व किराणा',
+    'nav.bar_excise': 'बार व राज्य उत्पादन शुल्क',
+    'nav.owner_dashboard': 'मालक डॅशबोर्ड व आकडेवारी',
+    'nav.cashier_shift': 'कॅशियर शिफ्ट (झेड-रिपोर्ट)',
+    'nav.settings': 'सेटिंग्ज व मेनू',
+    'header.tables_open': 'खुली टेबले:',
+    'header.covers_today': 'आजचे ग्राहक:',
+    'header.sales_today': 'आजची विक्री:',
+    'cart.print_bill': 'बिल छापा',
+    'cart.settle': 'बिल जमा व गल्ला',
+    'floor.ground': 'तळमजला',
+    'floor.terrace': 'गच्ची (टेरेस)',
+    'floor.tables_view': 'टेबल नकाशा',
+    'floor.menu_view': 'मेनू यादी',
+    'search.placeholder': 'डिश शोधा [Ctrl+F]...',
+    'status.open': 'उपलब्ध',
+    'status.seated': 'सुरू',
+    'status.ordered': 'मागणी दिली',
+    'status.billed': 'बिल झाले',
+    'cart.empty': 'ऑर्डरमध्ये काहीही नाही. पदार्थ निवडा.',
+    'cart.food_subtotal': 'अन्न उपएकूण (५% जीएसटी)',
+    'cart.liquor_subtotal': 'मद्य उपएकूण (५% व्हॅट)',
+    'cart.total_tax': 'शासकीय कर',
+    'cart.round_off': 'राउंड ऑफ',
+    'cart.grand_total': 'एकूण देय बिल',
+    'settle.title': 'बिल जमा व गल्ला उघडणे',
+    'settle.grand_total_payable': 'एकूण देय रक्कम:',
+    'settle.select_tender': 'पेमेंट पद्धत निवडा:',
+    'settle.tender_cash': 'रोख (Cash)',
+    'settle.tender_upi': 'युपीआय / क्यूआर',
+    'settle.tender_card': 'कार्ड / स्वाइप',
+    'settle.tender_khata': 'खाते / उधारी',
+    'settle.amount_tendered': 'दिलेली रक्कम',
+    'settle.change_due': 'परत करावयाची बाकी',
+    'settle.confirm': 'बिल जमा करा व गल्ला उघडा',
+    'settle.cancel': 'रद्द करा (Esc)',
+  }
+};
+
+// Marathi Category Translations
+const CATEGORY_NAMES_MR = {
+  'ALL': 'सर्व पदार्थ',
+  'Breakfast & Snacks': 'न्याहारी व स्नॅक्स',
+  'Veg Starters': 'शाकाहारी स्टार्टर्स',
+  'Non-Veg Starters': 'मांसाहारी स्टार्टर्स',
+  'Mains': 'मुख्य जेवण व रस्सा',
+  'Breads': 'भाकरी व रोटी',
+  'Bar & Spirits': 'बार व परमिट रूम',
+  'Desserts': 'गोड पदार्थ',
+  'Special Thalis': 'खास थाळी'
+};
+
+// Marathi Dish Name Mapping
+const DISH_NAMES_MR = {
+  1: 'चिकन सुक्का',
+  2: 'मटण तांबडा रस्सा (फुल)',
+  3: 'कोल्हापुरी चिकन',
+  4: 'विशेष शाकाहारी थाळी',
+  5: 'पनीर टिक्का',
+  6: 'कोथिंबीर वडी',
+  7: 'झणझणीत मिसळ पाव',
+  8: 'चिकन ६५',
+  9: 'मटण सुक्का फ्राय',
+  10: 'सुरमई रवा फ्राय',
+  11: 'गरमागरम ज्वारी भाकरी',
+  12: 'चपाती / फुलका (तूप)',
+  13: 'बटर तंदुरी रोटी',
+  14: 'दाल तडका',
+  15: 'जिरा राईस',
+  16: 'ताजी सोलकढी',
+  17: 'कोकम सरबत',
+  18: 'पुरणपोळी (कटाची आमटी)',
+  19: 'ब्लेंडर्स प्राइड व्हिस्की (६० मिली)',
+  20: 'किंगफिशर प्रीमियम बियर (६५० मिली)',
+  21: 'ओल्ड मंक रम (६० मिली)',
+  22: 'मॅजिक मोमेंट्स व्होडका (६० मिली)',
+  23: 'सुला शिराज वाईन',
+  24: 'पिठलं भाकरी स्पेशल',
+  25: 'पापलेट रवा फ्राय',
+  26: 'इंद्रायणी भात',
+  27: 'पारंपारिक खरवस',
+  28: 'गुलाब जामुन (२ नग)',
+  29: 'मसाला ताक / मठ्ठा',
+  30: 'उकडीचे मोदक (२ नग)'
+};
+
+function t(key) {
+  const lang = state.lang || 'en';
+  return (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
+}
+
+function setLanguage(lang) {
+  state.lang = (lang === 'mr') ? 'mr' : 'en';
+  try {
+    localStorage.setItem('restoos_lang', state.lang);
+  } catch (e) {}
+
+  updateLangToggleButtons();
+  applyTranslations();
+  renderAll();
+  showToast(state.lang === 'mr' ? 'भाषा: मराठी निवडली आहे.' : 'Language: English selected.', 'info');
+}
+
+function updateLangToggleButtons() {
+  const btnEn = document.getElementById('lang-btn-en');
+  const btnMr = document.getElementById('lang-btn-mr');
+  if (!btnEn || !btnMr) return;
+
+  if (state.lang === 'mr') {
+    btnMr.className = 'px-2 py-0.5 rounded-md transition font-bold text-[11px] bg-white text-emerald-900 shadow-xs cursor-pointer';
+    btnEn.className = 'px-2 py-0.5 rounded-md transition font-medium text-[11px] text-gray-600 hover:text-gray-900 cursor-pointer';
+  } else {
+    btnEn.className = 'px-2 py-0.5 rounded-md transition font-bold text-[11px] bg-white text-emerald-900 shadow-xs cursor-pointer';
+    btnMr.className = 'px-2 py-0.5 rounded-md transition font-medium text-[11px] text-gray-600 hover:text-gray-900 cursor-pointer';
+  }
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key && I18N[state.lang] && I18N[state.lang][key]) {
+      el.textContent = I18N[state.lang][key];
+    }
+  });
+
+  const searchInput = document.getElementById('dish-search-input');
+  if (searchInput) {
+    searchInput.placeholder = t('search.placeholder');
+  }
+
+  // Update floor filter buttons
+  const btnGround = document.getElementById('btn-sec-ground');
+  if (btnGround) btnGround.textContent = t('floor.ground');
+  const btnTerrace = document.getElementById('btn-sec-terrace');
+  if (btnTerrace) btnTerrace.textContent = t('floor.terrace');
+
+  // Update table/menu view toggles
+  const btnTables = document.getElementById('toggle-view-tables');
+  if (btnTables) btnTables.textContent = t('floor.tables_view');
+  const btnMenu = document.getElementById('toggle-view-menu');
+  if (btnMenu) btnMenu.textContent = t('floor.menu_view');
+}
+
 // 1. STATE & DATA INITIALIZATION
 // =============================================================================
 
 const state = {
   activeWorkspace: 'cash-counter',
+  lang: localStorage.getItem('restoos_lang') || 'en',
   // Role-Based Access Control (RBAC): CASHIER (Hotel things only) vs ADMIN (Whole software + stats)
   currentUser: { id: 3, username: 'pooja_more', display_name: 'Pooja More', role: 'CASHIER' },
   currentRole: 'CASHIER',
@@ -66,36 +257,36 @@ const state = {
   tables: [
     { id: 'T1', section: 'ground', seats: 2, status: 'open', timer: 0, waiter: 'Rahul', covers: 0, items: [] },
     { id: 'T2', section: 'ground', seats: 4, status: 'seated', timer: 35, waiter: 'Sunil', covers: 3, items: [
-      { id: 4, name: 'Special Veg Thali', price: 260, qty: 2, notes: 'Less oil', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
-      { id: 16, name: 'Sol Kadhi', price: 60, qty: 2, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
+      { id: 4, name_mr: 'विशेष शाकाहारी थाळी', name: 'Special Veg Thali', price: 260, qty: 2, notes: 'Less oil', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
+      { id: 16, name_mr: 'ताजी सोलकढी', name: 'Sol Kadhi', price: 60, qty: 2, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
     ]},
     { id: 'T3', section: 'ground', seats: 4, status: 'open', timer: 0, waiter: 'Pooja', covers: 0, items: [] },
     { id: 'T4', section: 'ground', seats: 6, status: 'seated', timer: 45, waiter: 'Rahul', covers: 5, items: [
-      { id: 3, name: 'Kolhapuri Chicken', price: 380, qty: 2, notes: 'Spicy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
-      { id: 11, name: 'Jowar Bhakri', price: 35, qty: 6, notes: 'Crisp', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
+      { id: 3, name_mr: 'कोल्हापुरी चिकन', name: 'Kolhapuri Chicken', price: 380, qty: 2, notes: 'Spicy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
+      { id: 11, name_mr: 'गरमागरम ज्वारी भाकरी', name: 'Jowar Bhakri', price: 35, qty: 6, notes: 'Crisp', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
     ]},
     { id: 'T5', section: 'ground', seats: 2, status: 'open', timer: 0, waiter: 'Sunil', covers: 0, items: [] },
     { id: 'T6', section: 'ground', seats: 4, status: 'open', timer: 0, waiter: 'Pooja', covers: 0, items: [] },
     { id: 'T7', section: 'ground', seats: 2, status: 'seated', timer: 20, waiter: 'Rahul', covers: 2, items: [
-      { id: 1, name: 'Chicken Sukka', price: 340.00, qty: 1, notes: 'Extra spicy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
-      { id: 2, name: 'Mutton Rassa (Full)', price: 750.00, qty: 1, notes: 'Hot gravy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
-      { id: 11, name: 'Jowar Bhakri', price: 35.00, qty: 2, notes: 'Fresh', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
-      { id: 19, name: 'Blenders Pride Whisky (60ml)', price: 220.00, qty: 2, notes: 'With Soda & Ice', isVeg: true, taxType: 'VAT', station: 'BAR' },
-      { id: 20, name: 'Kingfisher Premium (650ml)', price: 280.00, qty: 1, notes: 'Chilled', isVeg: true, taxType: 'VAT', station: 'BAR' }
+      { id: 1, name_mr: 'चिकन सुक्का', name: 'Chicken Sukka', price: 340.00, qty: 1, notes: 'Extra spicy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
+      { id: 2, name_mr: 'मटण तांबडा रस्सा (फुल)', name: 'Mutton Rassa (Full)', price: 750.00, qty: 1, notes: 'Hot gravy', isVeg: false, taxType: 'GST', station: 'KITCHEN' },
+      { id: 11, name_mr: 'गरमागरम ज्वारी भाकरी', name: 'Jowar Bhakri', price: 35.00, qty: 2, notes: 'Fresh', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
+      { id: 19, name_mr: 'ब्लेंडर्स प्राइड व्हिस्की (६० मिली)', name: 'Blenders Pride Whisky (60ml)', price: 220.00, qty: 2, notes: 'With Soda & Ice', isVeg: true, taxType: 'VAT', station: 'BAR' },
+      { id: 20, name_mr: 'किंगफिशर प्रीमियम बियर (६५० मिली)', name: 'Kingfisher Premium (650ml)', price: 280.00, qty: 1, notes: 'Chilled', isVeg: true, taxType: 'VAT', station: 'BAR' }
     ]},
     { id: 'T8', section: 'ground', seats: 6, status: 'open', timer: 0, waiter: 'Sunil', covers: 0, items: [] },
     
     // Terrace Section
     { id: 'T9', section: 'terrace', seats: 4, status: 'seated', timer: 12, waiter: 'Pooja', covers: 4, items: [
-      { id: 5, name: 'Paneer Tikka', price: 280, qty: 1, notes: 'Mint chutney', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
+      { id: 5, name_mr: 'पनीर टिक्का', name: 'Paneer Tikka', price: 280, qty: 1, notes: 'Mint chutney', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
       { id: 22, name: 'Sula Shiraz Red Wine (Glass)', price: 320, qty: 2, notes: '', isVeg: true, taxType: 'VAT', station: 'BAR' }
     ]},
     { id: 'T10', section: 'terrace', seats: 4, status: 'open', timer: 0, waiter: 'Rahul', covers: 0, items: [] },
     { id: 'T11', section: 'terrace', seats: 2, status: 'open', timer: 0, waiter: 'Sunil', covers: 0, items: [] },
     { id: 'T12', section: 'terrace', seats: 6, status: 'open', timer: 0, waiter: 'Pooja', covers: 0, items: [] },
     { id: 'T13', section: 'terrace', seats: 4, status: 'seated', timer: 5, waiter: 'Rahul', covers: 2, items: [
-      { id: 14, name: 'Dal Tadka', price: 190, qty: 1, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
-      { id: 15, name: 'Jeera Rice', price: 160, qty: 1, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
+      { id: 14, name_mr: 'दाल तडका', name: 'Dal Tadka', price: 190, qty: 1, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' },
+      { id: 15, name_mr: 'जिरा राईस', name: 'Jeera Rice', price: 160, qty: 1, notes: '', isVeg: true, taxType: 'GST', station: 'KITCHEN' }
     ]},
     { id: 'T14', section: 'terrace', seats: 4, status: 'open', timer: 0, waiter: 'Sunil', covers: 0, items: [] },
     { id: 'T15', section: 'terrace', seats: 2, status: 'open', timer: 0, waiter: 'Pooja', covers: 0, items: [] },
@@ -105,37 +296,37 @@ const state = {
   // Authentic Menu Items Catalog (Rasa Sahyadri & Permit Room FL-3)
   // Category Directory & Department Mappings
   categories: [
-    { id: 1, name: 'Bar', department: 'BAR', tax_category: 'VAT_ALCOHOL', itemCount: 6 },
-    { id: 2, name: 'Beverages', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 2 },
-    { id: 3, name: 'Breads', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 3 },
-    { id: 4, name: 'Breakfast', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 6 },
-    { id: 5, name: 'Mains', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 5 },
-    { id: 6, name: 'Non-Veg Starters', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 4 },
-    { id: 7, name: 'Veg Starters', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 3 },
-    { id: 8, name: 'Desserts', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 0 }
+    { id: 1, name_mr: 'बार व परमिट रूम', name: 'Bar', department: 'BAR', tax_category: 'VAT_ALCOHOL', itemCount: 6 },
+    { id: 2, name_mr: 'शीतपेये व सरबत', name: 'Beverages', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 2 },
+    { id: 3, name_mr: 'भाकरी व रोटी', name: 'Breads', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 3 },
+    { id: 4, name_mr: 'न्याहारी व स्नॅक्स', name: 'Breakfast', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 6 },
+    { id: 5, name_mr: 'मुख्य जेवण व रस्सा', name: 'Mains', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 5 },
+    { id: 6, name_mr: 'मांसाहारी स्टार्टर्स', name: 'Non-Veg Starters', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 4 },
+    { id: 7, name_mr: 'शाकाहारी स्टार्टर्स', name: 'Veg Starters', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 3 },
+    { id: 8, name_mr: 'गोड पदार्थ', name: 'Desserts', department: 'KITCHEN', tax_category: 'GST_FOOD', itemCount: 0 }
   ],
 
   menuItems: [
-    { id: 1, name: 'Chicken Sukka', category: 'Mains', price: 340.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Slow-roasted chicken in black masala & toasted coconut' },
-    { id: 2, name: 'Mutton Rassa (Full)', category: 'Mains', price: 750.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Kolhapuri spiced mutton curry with aromatic tambda rassa' },
-    { id: 3, name: 'Kolhapuri Chicken', category: 'Mains', price: 380.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Fiery chicken preparation simmered in whole spices' },
-    { id: 4, name: 'Special Veg Thali', category: 'Mains', price: 260.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: '2 seasonal sabzis, dal, 2 bhakris, jeera rice, sol kadhi' },
-    { id: 5, name: 'Paneer Tikka', category: 'Veg Starters', price: 280.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Charcoal-grilled fresh cottage cheese cubes with peppers' },
-    { id: 6, name: 'Kothimbir Vadi', category: 'Breakfast & Snacks', price: 160.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Crispy coriander & gram flour savory fritters with chutney' },
-    { id: 7, name: 'Misal Pav (Special)', category: 'Breakfast & Snacks', price: 140.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Sprouted moth beans in fiery rassa topped with farsan' },
-    { id: 8, name: 'Chicken 65', category: 'Non-Veg Starters', price: 310.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Deep-fried chicken chunks tossed in curry leaves & chilis' },
-    { id: 9, name: 'Mutton Sukka (Dry)', category: 'Non-Veg Starters', price: 450.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Tender goat mutton roasted dry with crushed garlic' },
-    { id: 10, name: 'Surmai Fry (Kingfish)', category: 'Non-Veg Starters', price: 550.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Fresh Malvani spiced rava coated pan-fried fish darnes' },
-    { id: 11, name: 'Jowar Bhakri', category: 'Breads', price: 35.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Traditional wood-stove baked sorghum flatbread' },
-    { id: 12, name: 'Chapati (Phulka)', category: 'Breads', price: 25.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Soft whole-wheat tawa phulka brushed with pure ghee' },
-    { id: 13, name: 'Butter Tandoori Roti', category: 'Breads', price: 30.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Crisp clay-oven tandoori roti topped with butter' },
-    { id: 14, name: 'Dal Tadka', category: 'Mains', price: 190.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Yellow lentils tempered with ghee, cumin & dried chilis' },
-    { id: 15, name: 'Jeera Rice', category: 'Mains', price: 160.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Fragrant basmati rice tossed with toasted cumin seeds' },
-    { id: 16, name: 'Sol Kadhi', category: 'Breakfast & Snacks', price: 60.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Digestive drink of fresh coconut milk & kokum with garlic' },
-    { id: 17, name: 'Kokum Sharbat', category: 'Breakfast & Snacks', price: 50.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Refreshing indigenous cooler made from sun-dried kokum' },
-    { id: 18, name: 'Puran Poli (with Katachi Amti)', category: 'Desserts', price: 90.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Sweet jaggery & chana dal filled flatbread with ghee' },
-    { id: 19, name: 'Blenders Pride Whisky (60ml)', category: 'Bar & Spirits', price: 220.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Premium blended Indian grain whisky (Large Pour 60ml)' },
-    { id: 20, name: 'Kingfisher Premium (650ml)', category: 'Bar & Spirits', price: 280.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Chilled lager bottle (650ml) served in frosty beer glass' },
+    { id: 1, name_mr: 'चिकन सुक्का', name: 'Chicken Sukka', category: 'Mains', price: 340.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Slow-roasted chicken in black masala & toasted coconut' },
+    { id: 2, name_mr: 'मटण तांबडा रस्सा (फुल)', name: 'Mutton Rassa (Full)', category: 'Mains', price: 750.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Kolhapuri spiced mutton curry with aromatic tambda rassa' },
+    { id: 3, name_mr: 'कोल्हापुरी चिकन', name: 'Kolhapuri Chicken', category: 'Mains', price: 380.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Fiery chicken preparation simmered in whole spices' },
+    { id: 4, name_mr: 'विशेष शाकाहारी थाळी', name: 'Special Veg Thali', category: 'Mains', price: 260.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: '2 seasonal sabzis, dal, 2 bhakris, jeera rice, sol kadhi' },
+    { id: 5, name_mr: 'पनीर टिक्का', name: 'Paneer Tikka', category: 'Veg Starters', price: 280.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Charcoal-grilled fresh cottage cheese cubes with peppers' },
+    { id: 6, name_mr: 'कोथिंबीर वडी', name: 'Kothimbir Vadi', category: 'Breakfast & Snacks', price: 160.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Crispy coriander & gram flour savory fritters with chutney' },
+    { id: 7, name_mr: 'झणझणीत मिसळ पाव', name: 'Misal Pav (Special)', category: 'Breakfast & Snacks', price: 140.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Sprouted moth beans in fiery rassa topped with farsan' },
+    { id: 8, name_mr: 'चिकन ६५', name: 'Chicken 65', category: 'Non-Veg Starters', price: 310.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Deep-fried chicken chunks tossed in curry leaves & chilis' },
+    { id: 9, name_mr: 'मटण सुक्का फ्राय', name: 'Mutton Sukka (Dry)', category: 'Non-Veg Starters', price: 450.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Tender goat mutton roasted dry with crushed garlic' },
+    { id: 10, name_mr: 'सुरमई रवा फ्राय', name: 'Surmai Fry (Kingfish)', category: 'Non-Veg Starters', price: 550.00, isVeg: false, taxType: 'GST', station: 'KITCHEN', desc: 'Fresh Malvani spiced rava coated pan-fried fish darnes' },
+    { id: 11, name_mr: 'गरमागरम ज्वारी भाकरी', name: 'Jowar Bhakri', category: 'Breads', price: 35.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Traditional wood-stove baked sorghum flatbread' },
+    { id: 12, name_mr: 'चपाती / फुलका (तूप)', name: 'Chapati (Phulka)', category: 'Breads', price: 25.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Soft whole-wheat tawa phulka brushed with pure ghee' },
+    { id: 13, name_mr: 'बटर तंदुरी रोटी', name: 'Butter Tandoori Roti', category: 'Breads', price: 30.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Crisp clay-oven tandoori roti topped with butter' },
+    { id: 14, name_mr: 'दाल तडका', name: 'Dal Tadka', category: 'Mains', price: 190.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Yellow lentils tempered with ghee, cumin & dried chilis' },
+    { id: 15, name_mr: 'जिरा राईस', name: 'Jeera Rice', category: 'Mains', price: 160.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Fragrant basmati rice tossed with toasted cumin seeds' },
+    { id: 16, name_mr: 'ताजी सोलकढी', name: 'Sol Kadhi', category: 'Breakfast & Snacks', price: 60.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Digestive drink of fresh coconut milk & kokum with garlic' },
+    { id: 17, name_mr: 'कोकम सरबत', name: 'Kokum Sharbat', category: 'Breakfast & Snacks', price: 50.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Refreshing indigenous cooler made from sun-dried kokum' },
+    { id: 18, name_mr: 'पुरणपोळी (कटाची आमटी)', name: 'Puran Poli (with Katachi Amti)', category: 'Desserts', price: 90.00, isVeg: true, taxType: 'GST', station: 'KITCHEN', desc: 'Sweet jaggery & chana dal filled flatbread with ghee' },
+    { id: 19, name_mr: 'ब्लेंडर्स प्राइड व्हिस्की (६० मिली)', name: 'Blenders Pride Whisky (60ml)', category: 'Bar & Spirits', price: 220.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Premium blended Indian grain whisky (Large Pour 60ml)' },
+    { id: 20, name_mr: 'किंगफिशर प्रीमियम बियर (६५० मिली)', name: 'Kingfisher Premium (650ml)', category: 'Bar & Spirits', price: 280.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Chilled lager bottle (650ml) served in frosty beer glass' },
     { id: 21, name: 'Old Monk Dark Rum (60ml)', category: 'Bar & Spirits', price: 180.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Legendary Indian vatted dark rum (Large Pour 60ml)' },
     { id: 22, name: 'Sula Shiraz Red Wine (Glass)', category: 'Bar & Spirits', price: 320.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Nashik estate red wine with pepper and blackberry notes' },
     { id: 23, name: 'Antiquity Blue Whisky (60ml)', category: 'Bar & Spirits', price: 260.00, isVeg: true, taxType: 'VAT', station: 'BAR', desc: 'Ultra-smooth grain whisky blend (Large Pour 60ml)' }
@@ -628,8 +819,12 @@ function renderMenuItems() {
             ${item.taxType === 'VAT' ? 'VAT FL-3' : 'GST 5%'}
           </span>
         </div>
-        <h4 class="font-bold text-xs text-gray-900 leading-tight">${item.name}</h4>
-        <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">${item.desc || ''}</p>
+        <h4 class="font-bold text-xs text-gray-900 leading-tight">
+          ${state.lang === 'mr' ? (item.name_mr || DISH_NAMES_MR[item.id] || item.name) : item.name}
+        </h4>
+        <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">
+          ${state.lang === 'mr' ? item.name : (item.name_mr || DISH_NAMES_MR[item.id] || item.desc || '')}
+        </p>
       </div>
 
       <div class="flex items-center justify-between pt-2 border-t border-gray-100 font-mono text-xs">
@@ -2410,18 +2605,20 @@ async function fetchBackendCategories() {
 function renderCategoryPills() {
   const container = document.getElementById('category-pills');
   if (container) {
-    // Collect active categories
+    const isMr = state.lang === 'mr';
+    const allText = isMr ? 'सर्व पदार्थ' : 'All Dishes';
     const allPill = `
       <button onclick="filterCategory('ALL')" class="cat-pill ${state.selectedCategory === 'ALL' ? 'active-cat px-3 py-1.5 rounded-full font-semibold bg-gray-900 text-white' : 'px-3 py-1.5 rounded-full font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-100'} whitespace-nowrap cursor-pointer transition">
-        All Dishes
+        ${allText}
       </button>
     `;
 
     const catPills = state.categories.map(c => {
       const isActive = state.selectedCategory.toLowerCase() === c.name.toLowerCase();
+      const displayName = isMr ? (c.name_mr || CATEGORY_NAMES_MR[c.name] || c.name) : c.name;
       return `
         <button onclick="filterCategory('${c.name}')" data-category="${c.name}" class="cat-pill ${isActive ? 'active-cat px-3 py-1.5 rounded-full font-semibold bg-gray-900 text-white' : 'px-3 py-1.5 rounded-full font-medium bg-white text-gray-700 border border-gray-200 hover:bg-gray-100'} whitespace-nowrap cursor-pointer transition">
-          ${c.name}
+          ${displayName}
         </button>
       `;
     }).join('');
@@ -2531,6 +2728,7 @@ async function submitNewCategory(e) {
   e.preventDefault();
 
   let name = (document.getElementById('modal-cat-name')?.value || document.getElementById('quick-cat-name')?.value || '').trim();
+  let name_mr = (document.getElementById('modal-cat-name-mr')?.value || '').trim();
   let dept = document.getElementById('modal-cat-dept')?.value || document.getElementById('quick-cat-dept')?.value || 'KITCHEN';
   let tax = document.getElementById('modal-cat-tax')?.value || document.getElementById('quick-cat-tax')?.value || 'GST_FOOD';
 
@@ -2548,6 +2746,7 @@ async function submitNewCategory(e) {
   const newCat = {
     id: Date.now(),
     name,
+    name_mr: name_mr || CATEGORY_NAMES_MR[name] || name,
     department: dept,
     tax_category: tax,
     itemCount: 0
@@ -2619,6 +2818,7 @@ async function submitNewDish(e) {
   e.preventDefault();
 
   const name = document.getElementById('newdish-name')?.value.trim();
+  const name_mr = document.getElementById('newdish-name-mr')?.value.trim() || '';
   const customCat = document.getElementById('newdish-category-custom')?.value.trim();
   const selectedCat = document.getElementById('newdish-category')?.value;
   const category = customCat || selectedCat || 'Mains';
@@ -2686,6 +2886,7 @@ async function submitNewDish(e) {
   const newItem = {
     id: newId,
     name,
+    name_mr: name_mr || name,
     category,
     price: finalPrice,
     isVeg,
