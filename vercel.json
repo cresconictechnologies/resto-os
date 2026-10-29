@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/settings",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/menu",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/pos",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/store",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/bar",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/owner",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/shift",
+      "dest": "/static/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/static/$1"
+    }
+  ]
+}
