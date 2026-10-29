@@ -2,6 +2,10 @@
 
 > Production-grade, offline-resilient restaurant operating system engineered for fast-paced dining establishments and bars. Built for Rasa Sahyadri (Koregaon Park, Pune) with dual deployment targets: Local LAN Desktop Mesh and Vercel + Supabase Cloud.
 
+- **GitHub Repository:** [github.com/cresconictechnologies/resto-os](https://github.com/cresconictechnologies/resto-os)
+- **Live Vercel Production:** [restaurant-management-woad-psi.vercel.app](https://restaurant-management-woad-psi.vercel.app)
+- **Local Counter Instance:** `http://127.0.0.1:8000`
+
 ---
 
 ## 1. Role-Based Access Control (RBAC)
