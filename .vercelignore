@@ -1,0 +1,7 @@
+.git
+__pycache__
+*.pyc
+.env
+restoos.db
+.pytest_cache
+.vscode
